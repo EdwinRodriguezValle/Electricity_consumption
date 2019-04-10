@@ -141,8 +141,6 @@ summary(Energy_consDisk_time1)
 
 
 houseWeek <- filter(Energy_consDisk_time1, year == 2008 & Week == 2)
-houseWeekSeasonal <- filter(Energy_consDisk_time1, year == 2008 & Week == 2)
-
 
 
 
@@ -181,5 +179,128 @@ plot_ly(houseDay, x = ~houseDay$DateTime, y
   layout(title = "Power Consumption January 9th, 2008",
          xaxis = list(title = "Time"),
          yaxis = list (title = "Power (watt-hours)"))
+
+
+###ploting per month------####
+
+houseWeekSeasonal <- filter(Energy_consDisk_time1, year == c(2007,2008,2009) & Month == 6)
+
+plot_ly(houseWeekSeasonal, x = ~houseWeekSeasonal$DateTime, y 
+        = ~houseWeekSeasonal$Sub_metering_1, 
+        name = 'Kitchen', 
+        type = 'scatter', 
+        mode = 'lines') %>%
+  
+  add_trace(y = ~houseWeekSeasonal$Sub_metering_2, 
+            name = 'Laundry Room', 
+            mode = 'lines') %>%
+  
+  add_trace(y = ~houseWeekSeasonal$Sub_metering_3, 
+            name = 'Water Heater & AC', 
+            mode = 'lines') %>%
+  
+  layout(title = "Power Consumption June 2007, 2008, 2009",
+         xaxis = list(title = "Time"),
+         yaxis = list (title = "Power (watt-hours)"))
+
+
+###Grouping by each ten minutes__________________________####
+houseDay10 <- filter(houseDay, year == 2008 & Month == 1 
+                     & Day == 9 
+                     & (Minute == 0
+                        | Minute == 10
+                        | Minute == 20 
+                        | Minute == 30 
+                        | Minute == 40 
+                        | Minute == 50))
+
+## Plot sub-meter 1, 2 and 3 with title, legend and labels - 10 Minute frequency
+plot_ly(houseDay10, x = ~houseDay10$DateTime, y = ~houseDay10$Sub_metering_1, 
+        name = 'Kitchen', 
+        type = 'scatter', 
+        mode = 'lines') %>%
+  
+  add_trace(y = ~houseDay10$Sub_metering_2, 
+            name = 'Laundry Room', 
+            mode = 'lines') %>%
+  
+  add_trace(y = ~houseDay10$Sub_metering_3, 
+            name = 'Water Heater & AC', 
+            mode = 'lines') %>%
+  
+  layout(title = "Power Consumption January 9th, 2008",
+         xaxis = list(title = "Time"),
+         yaxis = list (title = "Power (watt-hours)"))
+
+###perweek _____ no funciona####
+Energy_consDisk_time1$Week<- as.factor(Energy_consDisk_time1$Week)
+
+
+Week1 <- filter(Energy_consDisk_time1, year == 2008 
+                     & Week == 1
+                     & (Minute == 0
+                        | Minute == 15
+                        | Minute == 30
+                        | Minute == 45))
+
+plot_ly(Week1, x = ~Week1$DateTime, y = ~Week1$Sub_metering_1, 
+        name = 'Kitchen', 
+        type = 'scatter', 
+        mode = 'lines') %>%
+  
+  add_trace(y = ~Week1$Sub_metering_2, 
+            name = 'Laundry Room', 
+            mode = 'lines') %>%
+  
+  add_trace(y = ~Week1$Sub_metering_3, 
+            name = 'Water Heater & AC', 
+            mode = 'lines') %>%
+  
+  layout(title = "One week of every season, 2008",
+         xaxis = list(title = "Time"),
+         yaxis = list (title = "Power (watt-hours)"))
+
+#Promedio por dia_____________________
+
+MeanPerDay <- Energy_consDisk_time1 %>% 
+  group_by(DateTime = date(DateTime), Day = day(DateTime)) %>%
+  summarise_if(is.numeric, mean)
+
+
+
+plot_ly(MeanPerDay, x = ~MeanPerDay$DateTime, y = ~MeanPerDay$Sub_metering_1, 
+        name = 'Kitchen', 
+        type = 'scatter', 
+        mode = 'lines') %>%
+  
+  add_trace(y = ~MeanPerDay$Sub_metering_2, 
+            name = 'Laundry Room', 
+            mode = 'lines') %>%
+  
+  add_trace(y = ~MeanPerDay$Sub_metering_3, 
+            name = 'Water Heater & AC', 
+            mode = 'lines') %>%
+  
+  layout(title = "Mean per day, 2008",
+         xaxis = list(title = "Time"),
+         yaxis = list (title = "Power (watt-hours)"))
+
+plot_ly(MeanPerDay, x = ~MeanPerDay$DateTime, y = ~MeanPerDay$Sub_metering_1, 
+        name = 'Kitchen', 
+        type = 'scatter', 
+        mode = 'lines') %>%
+  
+  add_trace(y = ~MeanPerDay$Sub_metering_2, 
+            name = 'Laundry Room', 
+            mode = 'lines') %>%
+  
+  add_trace(y = ~MeanPerDay$Sub_metering_3, 
+            name = 'Water Heater & AC', 
+            mode = 'lines') %>%
+  
+  layout(title = "Years (in mean per day)",
+         xaxis = list(title = "Time"),
+         yaxis = list (title = "Power (watt-hours)"))
+
 
 
